@@ -1,0 +1,37 @@
+# File managed by puppet
+
+options {
+  port <%= scope.lookupvar('vtun::port') %>;
+}
+
+default {
+  compress zlib;
+  encrypt yes;
+  keepalive yes;
+  speed 0;
+  stat yes;
+  proto <%= scope.lookupvar('vtun::protocol') %>;
+}
+
+my_tunnel {
+  passwd  your-strong-secret;
+  type  ether;
+
+  persist yes;
+
+  up {
+    ifconfig "%d up";
+<% if scope.lookupvar('vtun::mode') == 'server' then -%>
+    ifconfig "br0 up"
+    program /usr/sbin/brctl "addif br0 %d" wait;
+<% else -%>
+    program "/bin/ip route add 10.0.0.0/8 dev %%";
+<% end -%>
+  };
+  down{
+    ifconfig "%% down";
+<% if scope.lookupvar('vtun::mode') == 'server' then -%>
+    program /usr/bin/brctl "delif br0 %d" wait;
+<% end -%>
+  };
+}

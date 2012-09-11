@@ -1,0 +1,9 @@
+# File managed by puppet
+
+<% if scope.lookupvar( 'vtun::mode' ) == 'server' then -%>
+RUN_SERVER=yes
+# SERVER_ARGS="-P 5000"
+<% else -%>
+CLIENT0_NAME=my_tunnel
+CLIENT0_HOST=<%= scope.lookupvar( 'vtun::server' ) %>
+<% end -%>
