@@ -22,7 +22,7 @@ my_tunnel {
   up {
     ifconfig "%d up";
 <% if scope.lookupvar('vtun::mode') == 'server' then -%>
-    ifconfig "br0 up"
+    ifconfig "br0 up";
     program /usr/sbin/brctl "addif br0 %d" wait;
 <% else -%>
     program "/bin/ip route add 10.0.0.0/8 dev %%";
