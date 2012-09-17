@@ -2,6 +2,15 @@
 #
 # This is the main vtun class
 #
+# == Module specific parameters
+#
+# [*mode*]
+#   Is the vtun installation in 'server' or 'client' mode ?
+#   (Default: client)
+#
+# [*server*]
+#   When you're in client mode you have to set the vtun server IP address.
+#   (Default: '')
 #
 # == Parameters
 #
@@ -415,12 +424,14 @@ class vtun (
 
   ### Service monitoring, if enabled ( monitor => true )
   if $vtun::bool_monitor == true {
-    monitor::port { "vtun_${vtun::protocol}_${vtun::port}":
-      protocol => $vtun::protocol,
-      port     => $vtun::port,
-      target   => $vtun::monitor_target,
-      tool     => $vtun::monitor_tool,
-      enable   => $vtun::manage_monitor,
+    if $vtun::mode == 'server' {
+      monitor::port { "vtun_${vtun::protocol}_${vtun::port}":
+        protocol => $vtun::protocol,
+        port     => $vtun::port,
+        target   => $vtun::monitor_target,
+        tool     => $vtun::monitor_tool,
+        enable   => $vtun::manage_monitor,
+      }
     }
     monitor::process { 'vtun_process':
       process  => $vtun::process,
